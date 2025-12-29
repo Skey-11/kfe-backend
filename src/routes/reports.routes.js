@@ -1,7 +1,11 @@
 const router = require("express").Router();
+const controller = require("../controllers/reports.controller");
+const { requireAuth, requireRole } = require("../middlewares/auth.middleware");
 
-router.get("/sold-products", (_, res) => res.json([]));
-router.get("/top-products", (_, res) => res.json([]));
-router.get("/sales-by-product", (_, res) => res.json([]));
+router.use(requireAuth, requireRole("manager", "admin"));
+
+router.get("/sold-products", controller.soldProducts);
+router.get("/top-products", controller.topProducts);
+router.get("/sales-by-product", controller.salesByProduct);
 
 module.exports = router;
