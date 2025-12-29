@@ -41,10 +41,10 @@ exports.reactivateByName = async ({ name, price, track_stock, stock }) => {
 };
 
 
-exports.create = async ({ name, price, is_active, track_stock }) => {
+exports.create = async ({ name, price, is_active, stock, track_stock }) => {
   const [r] = await pool.query(
     "INSERT INTO products (name, price, is_active, stock, track_stock) VALUES (?, ?, ?, ?, ?)",
-    [name, price, is_active ? 1 : 0, track_stock ? 1 : 0]
+    [name, price, is_active ? 1 : 0, stock ?? 0, track_stock ? 1 : 0]
   );
   return r.insertId;
 };
