@@ -29,10 +29,6 @@ exports.create = async ({ name, price, is_active, stock, track_stock }) => {
     if (Number(existing.is_active) === 1) {
       throw new Error("Ya existe un producto activo con ese nombre");
     }
-
-    const ok = await repo.reactivateByName({ name, price, track_stock, stock });
-    if (!ok) throw new Error("No se pudo reactivar el producto");
-
     return existing.id;
   }
 

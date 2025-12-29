@@ -26,19 +26,6 @@ exports.findByName = async (name) => {
   return rows[0] || null;
 };
 
-exports.reactivateByName = async ({ name, price, track_stock, stock }) => {
-  const [r] = await pool.query(
-    `UPDATE products
-     SET is_active = 1,
-         price = ?,
-         track_stock = ?,
-         stock = COALESCE(?, stock)
-     WHERE name = ?
-       AND is_active = 0`,
-    [price, track_stock, stock ?? null, name]
-  );
-  return r.affectedRows;
-};
 
 
 exports.create = async ({ name, price, is_active, stock, track_stock }) => {
