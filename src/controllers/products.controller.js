@@ -29,6 +29,18 @@ exports.update = async (req, res) => {
   }
 };
 
+exports.reactivate = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const ok = await service.reactivate(id);
+    if (!ok) return res.status(404).json({ message: "Producto no encontrado" });
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(400).json({ message: e.message });
+  }
+};
+
+
 exports.softDelete = async (req, res) => {
   try {
     const { id } = req.params;

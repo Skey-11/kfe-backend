@@ -2,12 +2,20 @@ const pool = require("../config/db");
 
 exports.list = async () => {
   const [rows] = await pool.query(
-    `SELECT id, name, price, stock, track_stock
+    `SELECT id, name, price, stock, track_stock, is_active
      FROM products
-     WHERE is_active = 1
      ORDER BY id DESC`
   );
   return rows;
+};
+
+
+exports.reactivate = async (id) => {
+  const [r] = await pool.query(
+    "UPDATE products SET is_active = 1 WHERE id = ? AND is_active = 0",
+    [id]
+  );
+  return r.affectedRows;
 };
 
 exports.findByName = async (name) => {

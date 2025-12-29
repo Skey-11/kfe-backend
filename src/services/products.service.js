@@ -70,3 +70,5 @@ exports.update = async (id, dto) => {
 };
 
 exports.softDelete = async (id) => repo.softDelete(id);
+
+exports.reactivate = async (id) => repo.reactivate(id);
