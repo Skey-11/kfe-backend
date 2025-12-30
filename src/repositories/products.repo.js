@@ -1,4 +1,6 @@
 const pool = require("../config/db");
+const { normalizeName } = require("../utils/normalize");
+
 
 exports.list = async () => {
   const [rows] = await pool.query(
@@ -18,14 +20,16 @@ exports.reactivate = async (id) => {
   return r.affectedRows;
 };
 
-exports.findByName = async (name) => {
+exports.findByNameNormalized = async (name) => {
+  const normalized = normalizeName(name);
+
   const [rows] = await pool.query(
     "SELECT id, is_active FROM products WHERE name = ? LIMIT 1",
-    [name]
+    [normalized]
   );
+
   return rows[0] || null;
 };
-
 
 
 exports.create = async ({ name, price, is_active, stock, track_stock }) => {

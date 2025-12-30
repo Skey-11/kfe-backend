@@ -1,21 +1,28 @@
 const repo = require("../repositories/products.repo");
+const { normalizeName } = require("../utils/normalize");
 
 exports.list = async () => repo.list();
 
 exports.create = async ({ name, price, is_active, stock, track_stock }) => {
-  name = (name || "").trim();
+  if (!name || price == null || price === "") {
+    throw new Error("name y price son requeridos");
+  }
 
-  if (!name || price == null || price === "") throw new Error("name y price son requeridos");
+  const normalizedName = normalizeName(name);
 
   price = Number(price);
-  if (!Number.isFinite(price) || price < 0) throw new Error("price inválido");
+  if (!Number.isFinite(price) || price < 0) {
+    throw new Error("price inválido");
+  }
 
   track_stock = track_stock ? 1 : 0;
 
   if (track_stock === 1) {
     if (stock !== undefined && stock !== null && stock !== "") {
       stock = Number(stock);
-      if (!Number.isFinite(stock) || stock < 0) throw new Error("stock inválido");
+      if (!Number.isFinite(stock) || stock < 0) {
+        throw new Error("stock inválido");
+      }
     } else {
       stock = null;
     }
@@ -23,7 +30,7 @@ exports.create = async ({ name, price, is_active, stock, track_stock }) => {
     stock = undefined;
   }
 
-  const existing = await repo.findByName(name);
+  const existing = await repo.findByNameNormalized(normalizedName);
 
   if (existing) {
     if (Number(existing.is_active) === 1) {
@@ -32,8 +39,15 @@ exports.create = async ({ name, price, is_active, stock, track_stock }) => {
     return existing.id;
   }
 
-  return repo.create({ name, price, is_active, stock, track_stock });
+  return repo.create({
+    name: name.trim(),   
+    price,
+    is_active,
+    stock,
+    track_stock
+  });
 };
+
 
 
 exports.update = async (id, dto) => {
