@@ -54,6 +54,15 @@ exports.update = async (id, dto) => {
   if (dto.name !== undefined) {
     dto.name = (dto.name || "").trim();
     if (!dto.name) throw new Error("name no puede quedar vacío");
+
+    
+    const existing = await repo.findByNameNormalizedExcludingId(dto.name, id);
+    if (existing) {
+      if (Number(existing.is_active) === 1) {
+        throw new Error("Ya existe un producto activo con ese nombre");
+      }
+      throw new Error("Ya existe un producto inactivo con ese nombre, reactívalo en lugar de duplicarlo");
+    }
   }
 
   if (dto.price !== undefined) {
@@ -78,6 +87,7 @@ exports.update = async (id, dto) => {
 
   return repo.update(id, dto);
 };
+
 
 exports.softDelete = async (id) => repo.softDelete(id);
 

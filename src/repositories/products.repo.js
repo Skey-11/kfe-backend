@@ -31,6 +31,21 @@ exports.findByNameNormalized = async (name) => {
   return rows[0] || null;
 };
 
+exports.findByNameNormalizedExcludingId = async (name, excludeId) => {
+  const normalized = normalizeName(name);
+
+  const [rows] = await pool.query(
+    `SELECT id, is_active
+     FROM products
+     WHERE name = ?
+       AND id <> ?
+     LIMIT 1`,
+    [normalized, Number(excludeId)]
+  );
+
+  return rows[0] || null;
+};
+
 
 exports.create = async ({ name, price, is_active, stock, track_stock }) => {
   const [r] = await pool.query(
